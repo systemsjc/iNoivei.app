@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>iNoivei | Confirmar Presença</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background: #fefae0; padding: 20px; text-align: center; }
+        .card { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 2px; border-top: 4px solid #283618; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; }
+        .btn { background: #283618; color: white; padding: 15px; width: 100%; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card" id="lock-card">
+        <h2>Confirmação de Presença</h2>
+        <input type="password" id="event-pass" placeholder="Senha do Evento">
+        <button class="btn" onclick="validarSenha()">Entrar no Convite</button>
+    </div>
+
+    <form id="rsvp-form" style="display:none;" class="card">
+        <h2>Confirmar Presença</h2>
+        <input type="text" id="guest-name" placeholder="Seu Nome Completo" required>
+        <button type="submit" class="btn">Confirmar Agora</button>
+    </form>
+
+    <script>
+        const supabase = supabase.createClient('SUA_URL_AQUI', 'SUA_CHAVE_ANON_AQUI');
+        let eventoId = null;
+
+        async function validarSenha() {
+            const pass = document.getElementById('event-pass').value;
+            const { data } = await supabase.from('eventos').select('id').eq('senha_convite', pass).single();
+            if (data) {
+                eventoId = data.id;
+                document.getElementById('lock-card').style.display = 'none';
+                document.getElementById('rsvp-form').style.display = 'block';
+            } else { alert("Senha incorreta!"); }
+        }
+
+        document.getElementById('rsvp-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await supabase.from('convidados').insert([{ evento_id: eventoId, nome: document.getElementById('guest-name').value }]);
+            alert('Presença confirmada!');
+        });
+    </script>
+</body>
+</html>
