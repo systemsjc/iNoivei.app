@@ -5,44 +5,36 @@
     <title>Acesso Noivos</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'Montserrat', sans-serif; background: #fefae0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .card { background: white; padding: 40px; width: 300px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        button { width: 100%; padding: 12px; background: #283618; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        body { font-family: 'Montserrat', sans-serif; background: #fefae0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; width: 320px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #283618; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Acesso Noivos</h2>
-        <input type="email" id="email" placeholder="E-mail">
-        <input type="password" id="senha" placeholder="Senha">
-        <button onclick="autenticar()">Entrar / Registrar</button>
+        <h2>Área dos Noivos</h2>
+        <input type="email" id="email" placeholder="Seu e-mail">
+        <input type="password" id="senha" placeholder="Sua senha">
+        <button onclick="autenticar()">Entrar ou Criar Conta</button>
     </div>
 
     <script>
-        // CORREÇÃO: URL DO PROJETO primeiro, CHAVE ANON (pública) depois
-        const supabase = supabase.createClient(
-            'https://bceaozypijtxvtfeeugb.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ' 
-        );
+        const supabase = supabase.createClient('https://bceaozypijtxvtfeeugb.supabase.co/rest/v1/', 'bceaozypijtxvtfeeugb');
 
         async function autenticar() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
+            
+            if(!email || !senha) return alert("Preencha todos os campos");
 
-            // Tenta logar
             const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
 
             if (error) {
-                // Se o login falhar, tenta cadastrar
                 const { error: regError } = await supabase.auth.signUp({ email, password: senha });
-                if (regError) {
-                    alert("Erro: " + regError.message);
-                } else {
-                    alert("Cadastro realizado! Você já pode logar.");
-                }
+                if (regError) alert("Erro: " + regError.message);
+                else alert("Cadastro realizado com sucesso! Agora clique em entrar.");
             } else {
-                alert("Login realizado com sucesso!");
                 window.location.href = 'dashboard.html';
             }
         }
