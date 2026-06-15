@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Gestão</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background: #fefae0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Convidados Confirmados</h2>
+        <ul id="lista"></ul>
+        <button onclick="supabase.auth.signOut(); window.location.href='login.html';">Sair</button>
+    </div>
+
+    <script>
+        const supabase = supabase.createClient('SUA_URL_AQUI', 'SUA_CHAVE_ANON_AQUI');
+
+        async function carregarLista() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return window.location.href = 'login.html';
+
+            const { data: evento } = await supabase.from('eventos').select('id').eq('user_id', user.id).single();
+            const { data: convidados } = await supabase.from('convidados').select('*').eq('evento_id', evento.id);
+
+            const lista = document.getElementById('lista');
+            lista.innerHTML = convidados.map(c => `<li>${c.nome}</li>`).join('');
+        }
+        carregarLista();
+    </script>
+</body>
+</html>
