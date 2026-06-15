@@ -20,28 +20,29 @@
     </div>
 
     <script>
-        // URL base correta e chave anon public
+        // CORREÇÃO: URL DO PROJETO primeiro, CHAVE ANON (pública) depois
         const supabase = supabase.createClient(
             'https://bceaozypijtxvtfeeugb.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ'
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ' 
         );
 
         async function autenticar() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, senha });
+            // Tenta logar
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
 
             if (error) {
-                // Se falhar o login, tenta registrar
-                const { error: regError } = await supabase.auth.signUp({ email, senha });
+                // Se o login falhar, tenta cadastrar
+                const { error: regError } = await supabase.auth.signUp({ email, password: senha });
                 if (regError) {
                     alert("Erro: " + regError.message);
                 } else {
                     alert("Cadastro realizado! Você já pode logar.");
                 }
             } else {
-                alert("Login com sucesso!");
+                alert("Login realizado com sucesso!");
                 window.location.href = 'dashboard.html';
             }
         }
