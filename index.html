@@ -77,5 +77,91 @@
             alert('Presença confirmada!');
         });
     </script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iNoivei - Simples e Inesquecível</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary: #283618; --accent: #bc6c25; --bg: #fefae0; --white: #ffffff; --text: #283618; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        header { text-align: center; padding: 40px 20px; background-color: var(--white); }
+        .logo-img { max-width: 120px; margin-bottom: 15px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary); }
+        .hero { height: 60vh; background: url('foto-noivos.jpg') center/cover no-repeat; display: flex; align-items: center; justify-content: center; margin-bottom: -50px; z-index: 1; }
+        .container { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; padding: 0 20px 40px; }
+        .card { background: var(--white); padding: 40px 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); margin-bottom: 30px; border-top: 4px solid var(--primary); }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #e0e0e0; }
+        .btn { display: block; width: 100%; padding: 20px; background-color: var(--primary); color: white; border: none; cursor: pointer; text-transform: uppercase; font-weight: 600; text-align: center; }
+        .btn:hover { background-color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="logo-inoivei.png" alt="Logo" class="logo-img">
+        <h1>iNoivei</h1>
+    </header>
+
+    <section class="hero"></section>
+
+    <div class="container">
+        
+        <div class="card" id="lock-card">
+            <h2>Confirmação de Presença</h2>
+            <input type="password" id="event-pass" placeholder="Senha do Evento">
+            <button class="btn" onclick="validarSenha()">Entrar no Convite</button>
+        </div>
+
+        <form id="rsvp-form" style="display:none;" class="card">
+            <h2>Confirmar Presença</h2>
+            <input type="text" id="guest-name" placeholder="Seu Nome Completo" required>
+            <button type="submit" class="btn">Confirmar Agora</button>
+        </form>
+
+        <div class="card">
+            <h2>Nosso Convite</h2>
+            <video controls style="width:100%"><source src="video-convite.mp4" type="video/mp4"></video>
+        </div>
+
+        <div class="card">
+            <h2>O Local</h2>
+            <p>Chácara Recanto do Sol, São José dos Campos</p>
+        </div>
+
+    </div>
+
+    <script>
+        const supabase = supabase.createClient('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ', 'sb_publishable_HI_MzbR6pdqOtMFp8UeTmg_dMZ_F6kq');
+        let eventoId = null;
+
+        async function validarSenha() {
+            const pass = document.getElementById('event-pass').value;
+            const { data } = await supabase.from('eventos').select('id').eq('senha_convite', pass).single();
+            if (data) {
+                eventoId = data.id;
+                document.getElementById('lock-card').style.display = 'none';
+                document.getElementById('rsvp-form').style.display = 'block';
+                alert("Acesso liberado!");
+            } else { alert("Senha incorreta!"); }
+        }
+
+        document.getElementById('rsvp-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await supabase.from('convidados').insert([{ evento_id: eventoId, nome: document.getElementById('guest-name').value }]);
+            alert('Presença confirmada!');
+        });
+    </script>
+<div style="text-align: center; margin-top: 40px; padding: 20px;">
+    <a href="login.html" style="color: #283618; font-size: 0.9rem; font-weight: bold; text-decoration: underline;">
+        🔐 Área exclusiva dos Noivos
+    </a>
+</div>
+</body>
+</html>
 </body>
 </html>
