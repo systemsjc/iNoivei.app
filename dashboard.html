@@ -17,7 +17,7 @@
     </div>
 
     <script>
-        const supabase = supabase.createClient('SUA_URL_AQUI', 'SUA_CHAVE_ANON_AQUI');
+        const supabase = supabase.createClient('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ', 'sb_publishable_HI_MzbR6pdqOtMFp8UeTmg_dMZ_F6kq');
 
         async function carregarLista() {
             const { data: { user } } = await supabase.auth.getUser();
