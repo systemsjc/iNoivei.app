@@ -2,42 +2,50 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Gestão</title>
+    <title>Painel de Gestão | iNoivei</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Montserrat', sans-serif; background: #fefae0; padding: 20px; }
         .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #283618; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 10px; border-bottom: 1px solid #eee; }
+        button { margin-top: 20px; padding: 10px; background: #bc6c25; color: white; border: none; cursor: pointer; border-radius: 4px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Convidados Confirmados</h2>
         <ul id="lista"></ul>
-        <button onclick="sair()">Sair</button>
+        <button onclick="sair()">Sair do Painel</button>
     </div>
 
     <script>
-        // CORREÇÃO: URL base primeiro, chave anon public depois
+        // --- COLOQUE AS SUAS CREDENCIAIS AQUI ---
         const supabase = supabase.createClient(
-            'https://bceaozypijtxvtfeeugb.supabase.co', 
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ'
+            'https://bceaozypijtxvtfeeugb.supabase.co/rest/v1/', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ' // A chave correta é a 'anon public' (começa com eyJ...)
         );
 
         async function carregarLista() {
+            // 1. Verifica se o noivo está logado
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return window.location.href = 'login.html';
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
 
             try {
-                // 1. Busca o evento do usuário logado
+                // 2. Busca o ID do evento do noivo logado
                 const { data: evento, error: errEvento } = await supabase
                     .from('eventos')
                     .select('id')
                     .eq('user_id', user.id)
                     .single();
 
-                if (errEvento) throw errEvento;
+                if (errEvento) throw new Error("Evento não encontrado.");
 
-                // 2. Busca convidados
+                // 3. Busca a lista de convidados desse evento
                 const { data: convidados, error: errConv } = await supabase
                     .from('convidados')
                     .select('*')
@@ -45,11 +53,15 @@
 
                 if (errConv) throw errConv;
 
+                // 4. Exibe na tela
                 const lista = document.getElementById('lista');
-                lista.innerHTML = convidados.map(c => `<li>${c.nome}</li>`).join('');
+                lista.innerHTML = convidados.length > 0 
+                    ? convidados.map(c => `<li>${c.nome}</li>`).join('') 
+                    : "<li>Nenhum convidado confirmado ainda.</li>";
+
             } catch (e) {
-                console.error("Erro ao carregar:", e.message);
-                alert("Erro ao buscar dados. Verifique o console (F12).");
+                console.error("Erro:", e.message);
+                alert("Erro ao buscar convidados. Verifique o console (F12).");
             }
         }
 
