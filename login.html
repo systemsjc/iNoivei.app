@@ -6,9 +6,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Montserrat', sans-serif; background: #fefae0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .card { background: white; padding: 40px; width: 300px; border-radius: 8px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; }
-        button { width: 100%; padding: 10px; background: #283618; color: white; border: none; }
+        .card { background: white; padding: 40px; width: 300px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 12px; background: #283618; color: white; border: none; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -20,15 +20,30 @@
     </div>
 
     <script>
-        const supabase = supabase.createClient('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ', 'sb_publishable_HI_MzbR6pdqOtMFp8UeTmg_dMZ_F6kq');
+        // URL base correta e chave anon public
+        const supabase = supabase.createClient(
+            'https://bceaozypijtxvtfeeugb.supabase.co', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ'
+        );
+
         async function autenticar() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
-            const { error } = await supabase.auth.signInWithPassword({ email, senha });
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, senha });
+
             if (error) {
-                await supabase.auth.signUp({ email, senha });
-                alert("Cadastro realizado!");
-            } else { window.location.href = 'dashboard.html'; }
+                // Se falhar o login, tenta registrar
+                const { error: regError } = await supabase.auth.signUp({ email, senha });
+                if (regError) {
+                    alert("Erro: " + regError.message);
+                } else {
+                    alert("Cadastro realizado! Você já pode logar.");
+                }
+            } else {
+                alert("Login com sucesso!");
+                window.location.href = 'dashboard.html';
+            }
         }
     </script>
 </body>
