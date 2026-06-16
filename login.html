@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <title>Acesso Noivos</title>
@@ -20,20 +20,31 @@
     </div>
 
     <script>
-        const supabase = supabase.createClient('https://bceaozypijtxvtfeeugb.supabase.co/rest/v1/', 'bceaozypijtxvtfeeugb');
+        // SUBSTITUA APENAS PELAS SUAS CREDENCIAIS REAIS DO SUPABASE
+        const supabase = supabase.createClient(
+            'https://bceaozypijtxvtfeeugb.supabase.co', 
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ' 
+        );
 
         async function autenticar() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             
-            if(!email || !senha) return alert("Preencha todos os campos");
+            if(!email || !senha) return alert("Preencha e-mail e senha");
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
+            const { data, error } = await supabase.auth.signInWithPassword({ 
+                email: email, 
+                password: senha 
+            });
 
             if (error) {
-                const { error: regError } = await supabase.auth.signUp({ email, password: senha });
+                // Tenta criar conta se o login falhar
+                const { error: regError } = await supabase.auth.signUp({ 
+                    email: email, 
+                    password: senha 
+                });
                 if (regError) alert("Erro: " + regError.message);
-                else alert("Cadastro realizado com sucesso! Agora clique em entrar.");
+                else alert("Conta criada! Pode agora entrar.");
             } else {
                 window.location.href = 'dashboard.html';
             }
