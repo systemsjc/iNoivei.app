@@ -25,30 +25,41 @@
             'https://bceaozypijtxvtfeeugb.supabase.co', 
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjZWFvenlwaWp0eHZ0ZmVldWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE0NDMwMDAsImV4cCI6MjA5NzAxOTAwMH0.twEKmTfuyHQcCtZABxdmozePF0kPliu9uHST3ljz1fQ' 
         );
-
         async function autenticar() {
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
-            
-            if(!email || !senha) return alert("Preencha e-mail e senha");
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
 
-            const { data, error } = await supabase.auth.signInWithPassword({ 
-                email: email, 
-                password: senha 
-            });
+    // Validação básica
+    if (!email || !senha) {
+        alert("Por favor, preencha o e-mail e a senha.");
+        return;
+    }
 
-            if (error) {
-                // Tenta criar conta se o login falhar
-                const { error: regError } = await supabase.auth.signUp({ 
-                    email: email, 
-                    password: senha 
-                });
-                if (regError) alert("Erro: " + regError.message);
-                else alert("Conta criada! Pode agora entrar.");
-            } else {
-                window.location.href = 'dashboard.html';
-            }
+    // Tenta fazer login
+    const { data, error } = await supabase.auth.signInWithPassword({ 
+        email: email, 
+        password: senha 
+    });
+
+    if (error) {
+        // Se o login falhar, tenta criar uma conta (registro)
+        const { error: regError } = await supabase.auth.signUp({ 
+            email: email, 
+            password: senha 
+        });
+        
+        if (regError) {
+            alert("Erro ao entrar ou cadastrar: " + regError.message);
+        } else {
+            alert("Cadastro realizado com sucesso! Pode agora fazer login.");
         }
+    } else {
+        // Se o login for bem-sucedido, redireciona
+        alert("Login realizado com sucesso!");
+        window.location.href = 'dashboard.html';
+    }
+}
+
     </script>
 </body>
 </html>
